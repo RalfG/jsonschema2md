@@ -16,7 +16,7 @@ jobs:
       with:
         pypi_token: ${{ secrets.PYPI_TOKEN }}
 
-      - name: Create GitHub Release
+    - name: Create GitHub Release
       uses: docker://antonyurchenko/git-release:v3.4.0
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
