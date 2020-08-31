@@ -37,7 +37,7 @@ with these changes. You pull request message ideally should include:
 
 - When a new version is ready to be published:
 
-    1. Change the `__version__` in `cascade_config.py` following
+    1. Change the `__version__` in `pyproject.toml` following
     [semantic versioning](https://semver.org/).
     2. Update the documentation (`README.md`), if required.
     3. Update the changelog (if not already done) in `CHANGELOG.md` according to
