@@ -25,7 +25,8 @@ class Parser:
 
     Examples
     --------
-    >>> parser = Parser()
+    >>> import jsonschema2md
+    >>> parser = jsonschema2md.Parser()
     >>> md_lines = parser.parse_schema(json.load(input_json))
     """
 
