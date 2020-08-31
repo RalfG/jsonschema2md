@@ -29,7 +29,7 @@ importlib_metadata = { version = "^1", python = "<3.8"}
 flake8 = "^3.8.3"
 pytest = "^6.0.1"
 pytest-cov = "^2.10.1"
-pydocstyle = "^5"
+pydocstyle = "^5.1.1"
 
 [build-system]
 requires = ["poetry>=0.12"]
