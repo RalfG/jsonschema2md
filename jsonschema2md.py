@@ -151,7 +151,7 @@ def main(input_json, output_markdown):
     parser = Parser()
     output_md = parser.parse_schema(json.load(input_json))
     output_markdown.writelines(output_md)
-    click.secho("✔ Succesfully parsed schema!", bold=True, fg="green")
+    click.secho("✔ Successfully parsed schema!", bold=True, fg="green")
 
 
 if __name__ == "__main__":
