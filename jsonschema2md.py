@@ -13,6 +13,7 @@ except ImportError:
 import json
 import re
 from typing import Dict, Optional, Sequence
+import io
 
 import click
 
@@ -96,6 +97,20 @@ class Parser:
         output_lines.append(
             f"{indentation}- {name_formatted}{obj_type}{description_line}\n"
         )
+
+        def dump_json_with_line_head(obj, line_head, **kwargs):
+            f = io.StringIO(json.dumps(obj, **kwargs))
+            result = [line_head + line for line in f.readlines()]
+            return ''.join(result)
+
+        if "examples" in obj:
+            example_indentation = " " * self.tab_size * (indent_level + 1)
+            output_lines.append(f'\n{example_indentation}Examples:\n')
+            for example in obj["examples"]:
+                example_str = dump_json_with_line_head(example, line_head=example_indentation, indent=4)
+                output_lines.append(
+                    f"{example_indentation}```json\n{example_str}\n{example_indentation}```\n"
+                )
 
         # Recursively add items and definitions:
         for name in ["Items", "Definitions"]:
