@@ -5,6 +5,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+
+## [0.2.0.post1] - 20/04/2021
+- Re-release of v0.2.0 to fix GitHub tagging issue
 ## [0.2.0] - 20/04/2021
 - Examples are now also rendered (PR #1, thanks @mrtj!)
 
