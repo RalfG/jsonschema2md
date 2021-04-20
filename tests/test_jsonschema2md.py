@@ -30,6 +30,12 @@ class TestParser:
                 },
             }
         },
+        "examples": [
+            {
+                "fruits": ["apple", "orange"],
+                "vegetables": [{"veggieName": "cabbage", "veggieLike": True}]
+            }
+        ],
     }
 
     def test_construct_description_line(self):
@@ -124,6 +130,22 @@ class TestParser:
             '## Definitions\n\n',
             '- **`veggie`** *(object)*\n',
             '  - **`veggieName`** *(string)*: The name of the vegetable.\n',
-            '  - **`veggieLike`** *(boolean)*: Do I like this vegetable?\n'
+            '  - **`veggieLike`** *(boolean)*: Do I like this vegetable?\n',
+            '## Examples\n\n',
+            '  ```json\n'
+            '  {\n'
+            '      "fruits": [\n'
+            '          "apple",\n'
+            '          "orange"\n'
+            '      ],\n'
+            '      "vegetables": [\n'
+            '          {\n'
+            '              "veggieName": "cabbage",\n'
+            '              "veggieLike": true\n'
+            '          }\n'
+            '      ]\n'
+            '  }\n'
+            '  ```\n'
         ]
         assert expected_output == parser.parse_schema(self.test_schema)
+        

@@ -13,6 +13,7 @@ except ImportError:
 import json
 import re
 from typing import Dict, Optional, Sequence
+import io
 
 import click
 
@@ -68,6 +69,33 @@ class Parser:
 
         return description_line
 
+    def _construct_examples(
+        self,
+        obj: Dict,
+        indent_level: int = 0,
+        add_header: bool = True
+    ) -> Sequence[str]:
+        def dump_json_with_line_head(obj, line_head, **kwargs):
+            f = io.StringIO(json.dumps(obj, **kwargs))
+            result = [line_head + line for line in f.readlines()]
+            return ''.join(result)
+
+        example_lines = []
+        if "examples" in obj:
+            example_indentation = " " * self.tab_size * (indent_level + 1)
+            if add_header:
+                example_lines.append(f'\n{example_indentation}Examples:\n')
+            for example in obj["examples"]:
+                example_str = dump_json_with_line_head(
+                    example,
+                    line_head=example_indentation,
+                    indent=4
+                )
+                example_lines.append(
+                    f"{example_indentation}```json\n{example_str}\n{example_indentation}```\n"
+                )
+        return example_lines
+
     def _parse_object(
         self,
         obj: Dict,
@@ -118,6 +146,11 @@ class Parser:
                     indent_level=indent_level + 1,
                 )
 
+        # Add examples
+        output_lines.extend(
+            self._construct_examples(obj, indent_level=indent_level)
+        )
+
         return output_lines
 
     def parse_schema(self, schema_object: Dict) -> Sequence[str]:
@@ -138,6 +171,13 @@ class Parser:
                 output_lines.append(f"## {name}\n\n")
                 for obj_name, obj in schema_object[name.lower()].items():
                     output_lines.extend(self._parse_object(obj, obj_name))
+
+        # Add examples
+        if "examples" in schema_object:
+            output_lines.append("## Examples\n\n")
+            output_lines.extend(self._construct_examples(
+                schema_object, indent_level=0, add_header=False
+            ))
 
         return output_lines
 
