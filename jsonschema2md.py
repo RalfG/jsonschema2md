@@ -113,12 +113,15 @@ class Parser:
         if not output_lines:
             output_lines = []
 
+        indentation = " " * self.tab_size * indent_level
+        indentation_items = " " * self.tab_size * (indent_level + 1)
+
         # Construct full description line
-        description_line = self._construct_description_line(obj)
+        description_line_base = self._construct_description_line(obj)
+        description_line = list(map(lambda line: line.replace("\n\n", "<br>" + indentation_items), description_line_base))
 
         # Add full line to output
         description_line = " ".join(description_line)
-        indentation = " " * self.tab_size * indent_level
         obj_type = f" *({obj['type']})*" if "type" in obj else ""
         name_formatted = f"**`{name}`**" if name_monospace else f"**{name}**"
         output_lines.append(
