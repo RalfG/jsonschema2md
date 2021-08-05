@@ -17,10 +17,9 @@ jobs:
         pypi_token: ${{ secrets.PYPI_TOKEN }}
 
     - name: Create GitHub Release
-      uses: docker://antonyurchenko/git-release:v3.4.0
+      uses: docker://antonyurchenko/git-release:v4
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         DRAFT_RELEASE: "false"
         PRE_RELEASE: "false"
         CHANGELOG_FILE: "CHANGELOG.md"
-        ALLOW_TAG_PREFIX: "true"
