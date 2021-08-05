@@ -6,6 +6,9 @@ and this project adheres to
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 
+## [0.2.1] - 05/08/2021
+- Fix broken indentation for examples section (PR #3, thanks @KatekovAnton!)
+
 ## [0.2.0.post1] - 20/04/2021
 - Re-release of v0.2.0 to fix GitHub tagging issue
 ## [0.2.0] - 20/04/2021
