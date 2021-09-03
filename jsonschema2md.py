@@ -84,7 +84,7 @@ class Parser:
         if "examples" in obj:
             example_indentation = " " * self.tab_size * (indent_level + 1)
             if add_header:
-                example_lines.append(f'\n{example_indentation}Examples:\n')
+                example_lines.append(f'\n{example_indentation}Examples:\n\n')
             for example in obj["examples"]:
                 example_str = dump_json_with_line_head(
                     example,
@@ -92,7 +92,7 @@ class Parser:
                     indent=4
                 )
                 example_lines.append(
-                    f"{example_indentation}```json\n{example_str}\n{example_indentation}```\n"
+                    f"{example_indentation}```json\n{example_str}\n{example_indentation}```\n\n"
                 )
         return example_lines
 
