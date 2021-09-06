@@ -11,6 +11,7 @@ try:
 except ImportError:
     from importlib_metadata import version
 import json
+import yaml
 import re
 from typing import Dict, Optional, Sequence
 import io
@@ -29,6 +30,11 @@ class Parser:
     >>> import jsonschema2md
     >>> parser = jsonschema2md.Parser()
     >>> md_lines = parser.parse_schema(json.load(input_json))
+
+    Options
+    --------
+    example_as_yaml: bool #Show example as yaml format (default Json)
+    show_example: str (all / object / propertie) #Show all example or selected. Only Objects example or properties example (default all)
     """
 
     tab_size = 2
@@ -73,10 +79,16 @@ class Parser:
         self,
         obj: Dict,
         indent_level: int = 0,
-        add_header: bool = True
+        add_header: bool = True,
+        example_as_yaml: bool = False,
     ) -> Sequence[str]:
         def dump_json_with_line_head(obj, line_head, **kwargs):
             f = io.StringIO(json.dumps(obj, **kwargs))
+            result = [line_head + line for line in f.readlines()]
+            return ''.join(result)
+
+        def dump_yaml_with_line_head(obj, line_head, **kwargs):
+            f = io.StringIO(yaml.dump(obj, **kwargs))
             result = [line_head + line for line in f.readlines()]
             return ''.join(result)
 
@@ -84,16 +96,27 @@ class Parser:
         if "examples" in obj:
             example_indentation = " " * self.tab_size * (indent_level + 1)
             if add_header:
-                example_lines.append(f'\n{example_indentation}Examples:\n\n')
+                example_lines.append(f'\n{example_indentation}Examples:\n')
             for example in obj["examples"]:
-                example_str = dump_json_with_line_head(
-                    example,
-                    line_head=example_indentation,
-                    indent=4
-                )
-                example_lines.append(
-                    f"{example_indentation}```json\n{example_str}\n{example_indentation}```\n\n"
-                )
+                if example_as_yaml:
+                    example_str = dump_yaml_with_line_head(
+                        example,
+                        line_head=example_indentation,
+                        indent=4
+                    )
+                    example_lines.append(
+                        f"{example_indentation}```yaml\n{example_str}\n{example_indentation}```\n\n"
+                    )
+                else:
+                    example_str = dump_json_with_line_head(
+                        example,
+                        line_head=example_indentation,
+                        indent=4
+                    )
+                    example_lines.append(
+                        f"{example_indentation}```json\n{example_str}\n{example_indentation}```\n\n"
+                    )
+
         return example_lines
 
     def _parse_object(
@@ -103,6 +126,8 @@ class Parser:
         name_monospace: bool = True,
         output_lines: Optional[str] = None,
         indent_level: int = 0,
+        example_as_yaml: bool = False,
+        show_example: str = 'all'
     ) -> Sequence[str]:
         """Parse JSON object and its items, definitions, and properties recursively."""
         if not isinstance(obj, dict):
@@ -136,7 +161,9 @@ class Parser:
                     name,
                     name_monospace=False,
                     output_lines=output_lines,
-                    indent_level=indent_level + 1
+                    indent_level=indent_level + 1,
+                    example_as_yaml=example_as_yaml,
+                    show_example=show_example
                 )
 
         # Recursively add child properties
@@ -147,19 +174,21 @@ class Parser:
                     property_name,
                     output_lines=output_lines,
                     indent_level=indent_level + 1,
+                    example_as_yaml=example_as_yaml,
+                    show_example=show_example
                 )
 
         # Add examples
-        output_lines.extend(
-            self._construct_examples(obj, indent_level=indent_level)
-        )
+        if (show_example == 'all' or show_example == 'propertie'):
+            output_lines.extend(
+                self._construct_examples(obj, indent_level=indent_level, example_as_yaml=example_as_yaml)
+            )
 
         return output_lines
 
-    def parse_schema(self, schema_object: Dict) -> Sequence[str]:
+    def parse_schema(self, schema_object: Dict, show_example: str = 'all', example_as_yaml: bool = False) -> Sequence[str]:
         """Parse JSON Schema object to markdown text."""
         output_lines = []
-
         # Add title and description
         if "title" in schema_object:
             output_lines.append(f"# {schema_object['title']}\n\n")
@@ -173,13 +202,13 @@ class Parser:
             if name.lower() in schema_object:
                 output_lines.append(f"## {name}\n\n")
                 for obj_name, obj in schema_object[name.lower()].items():
-                    output_lines.extend(self._parse_object(obj, obj_name))
+                    output_lines.extend(self._parse_object(obj, obj_name, example_as_yaml=example_as_yaml, show_example=show_example))
 
         # Add examples
-        if "examples" in schema_object:
+        if "examples" in schema_object and (show_example == 'all' or show_example == 'object'):
             output_lines.append("## Examples\n\n")
             output_lines.extend(self._construct_examples(
-                schema_object, indent_level=0, add_header=False
+                schema_object, indent_level=0, add_header=False, example_as_yaml=example_as_yaml
             ))
 
         return output_lines

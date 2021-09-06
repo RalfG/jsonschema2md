@@ -71,7 +71,26 @@ import jsonschema2md
 parser = jsonschema2md.Parser()
 md_lines = parser.parse_schema(json.load(input_json))
 ```
+### Options
 
+- Show example as Yaml format instead of JSON using `example_as_yaml` boolean (default `false`):
+
+  ```python
+  md_lines = parser.parse_schema(json.load(input_json), true)
+  ```
+
+- Selecte if you want to show all example or juste for Object or Propertie section (default `all`)
+
+  ```python
+  ## Show all examples
+  md_lines = parser.parse_schema(json.load(input_json), show_example='all')
+
+  ## Show only object section examples
+  md_lines = parser.parse_schema(json.load(input_json), show_example='object')
+
+  ## Show only properties section examples
+  md_lines = parser.parse_schema(json.load(input_json), show_example='propertie')
+  ```
 
 ## Contributing
 
