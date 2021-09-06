@@ -34,7 +34,7 @@ class Parser:
     Options
     --------
     example_as_yaml: bool #Show example as yaml format (default Json)
-    show_example: str (all / object / propertie) #Show all example or selected. Only Objects example or properties example (default all)
+    show_example: str (all / object / propertie /any) #Show all example or selected. Only Objects example or properties example (default all)
     """
 
     tab_size = 2
@@ -219,7 +219,7 @@ class Parser:
 @click.argument("input-json", type=click.File("rt"), metavar="<input.json>")
 @click.argument("output-markdown", type=click.File("wt"), metavar="<output.md>")
 @click.option("--example-as-yaml", type=bool, default=False, help="Show example as yaml format (default json)")
-@click.option("--show-example", type=click.Choice(['all', 'propertie', 'object'], case_sensitive=False), default='all', help="Selected type example to show")
+@click.option("--show-example", type=click.Choice(['all', 'propertie', 'object', 'any'], case_sensitive=False), default='all', help="Selected type example to show")
 def main(input_json, output_markdown, example_as_yaml, show_example):
     """Convert JSON Schema to Markdown documentation."""
     parser = Parser()

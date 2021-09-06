@@ -103,6 +103,10 @@ print(''.join(md_lines))
   ## Show only properties section examples
   md_lines = parser.parse_schema(input_json, show_example='propertie')
   print(''.join(md_lines))
+
+  ## Don't Show examples
+  md_lines = parser.parse_schema(input_json, show_example='any')
+  print(''.join(md_lines))
   ```
 
   ```sh
