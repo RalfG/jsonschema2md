@@ -106,7 +106,7 @@ print(''.join(md_lines))
   ```
 
   ```sh
-  jsonschema2md --show-example=object True <input.json> <output.md>
+  jsonschema2md --show-example object <input.json> <output.md>
   ```
 
 ## Contributing
