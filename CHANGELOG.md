@@ -7,6 +7,8 @@ and this project adheres to
 
 ## [0.2.2] - 04/09/2021
 - Fix Fenced code blocks should be surrounded by blank lines (Issue #4)
+- Add `example_as_yaml` option
+- Add `show_example` option
 
 ## [0.2.1] - 05/08/2021
 - Fix broken indentation for examples section (PR #3, thanks @KatekovAnton!)

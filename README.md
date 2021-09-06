@@ -50,46 +50,63 @@ directory for more elaborate examples.
 ## Installation
 
 Install with pip
-```sh
-$ pip install jsonschema2md
-```
 
+```sh
+pip install jsonschema2md
+```
 
 ## Usage
 
 ### From the CLI
 
 ```sh
-$ jsonschema2md <input.json> <output.md>
+jsonschema2md <input.json> <output.md>
 ```
-
 
 ### From Python
 
 ```python
 import jsonschema2md
+import json
+
+with open("./examples/food.json","r") as json_file: input_json = json.load(json_file);
+
 parser = jsonschema2md.Parser()
-md_lines = parser.parse_schema(json.load(input_json))
+md_lines = parser.parse_schema(input_json)
+print(''.join(md_lines))
 ```
+
 ### Options
 
 - Show example as Yaml format instead of JSON using `example_as_yaml` boolean (default `false`):
 
   ```python
-  md_lines = parser.parse_schema(json.load(input_json), true)
+  md_lines = parser.parse_schema(input_json, example_as_yaml=True)
+  print(''.join(md_lines))
+  ```
+
+  ```sh
+  jsonschema2md --example-as-yaml True <input.json> <output.md>
   ```
 
 - Selecte if you want to show all example or juste for Object or Propertie section (default `all`)
 
   ```python
   ## Show all examples
-  md_lines = parser.parse_schema(json.load(input_json), show_example='all')
+  md_lines = parser.parse_schema(input_json, show_example='all')
+  print(''.join(md_lines))
 
   ## Show only object section examples
-  md_lines = parser.parse_schema(json.load(input_json), show_example='object')
+  md_lines = parser.parse_schema(input_json, show_example='object')
+  print(''.join(md_lines))
 
   ## Show only properties section examples
-  md_lines = parser.parse_schema(json.load(input_json), show_example='propertie')
+  md_lines = parser.parse_schema(input_json, show_example='propertie')
+  print(''.join(md_lines))
+  ```
+
+  ```sh
+  jsonschema2md --show-example=object True <input.json> <output.md>
   ```
 
 ## Contributing
