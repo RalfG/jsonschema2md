@@ -218,10 +218,12 @@ class Parser:
 @click.version_option(version=__version__)
 @click.argument("input-json", type=click.File("rt"), metavar="<input.json>")
 @click.argument("output-markdown", type=click.File("wt"), metavar="<output.md>")
-def main(input_json, output_markdown):
+@click.option("--example-as-yaml", type=bool, default=False, help="Show example as yaml format (default json)")
+@click.option("--show-example", type=click.Choice(['all', 'propertie', 'object'], case_sensitive=False), default='all', help="Selected type example to show")
+def main(input_json, output_markdown, example_as_yaml, show_example):
     """Convert JSON Schema to Markdown documentation."""
     parser = Parser()
-    output_md = parser.parse_schema(json.load(input_json))
+    output_md = parser.parse_schema(json.load(input_json), example_as_yaml=example_as_yaml, show_example=show_example )
     output_markdown.writelines(output_md)
     click.secho("✔ Successfully parsed schema!", bold=True, fg="green")
 
