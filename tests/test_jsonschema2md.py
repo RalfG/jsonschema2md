@@ -145,7 +145,6 @@ class TestParser:
             '          }\n'
             '      ]\n'
             '  }\n'
-            '  ```\n'
+            '  ```\n\n'
         ]
         assert expected_output == parser.parse_schema(self.test_schema)
-        

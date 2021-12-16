@@ -10,13 +10,14 @@ try:
     from importlib.metadata import version
 except ImportError:
     from importlib_metadata import version
+
+import io
 import json
-import yaml
 import re
 from typing import Dict, Optional, Sequence
-import io
 
 import click
+import yaml
 
 __version__ = version('jsonschema2md')
 
@@ -30,14 +31,38 @@ class Parser:
     >>> import jsonschema2md
     >>> parser = jsonschema2md.Parser()
     >>> md_lines = parser.parse_schema(json.load(input_json))
-
-    Options
-    --------
-    example_as_yaml: bool #Show example as yaml format (default Json)
-    show_example: str (all / object / propertie /any) #Show all example or selected. Only Objects example or properties example (default all)
     """
 
     tab_size = 2
+
+    def __init__(
+        self,
+        examples_as_yaml: bool = False,
+        show_examples: str = "all"
+    ):
+        """
+        Setup JSON Schema to Markdown parser.
+
+        Parameters
+        ----------
+        examples_as_yaml : bool, default False
+            Parse examples in YAML-format instead of JSON.
+        show_examples: str, default 'all'
+            Parse examples for only objects, only properties or all. Valid options are
+            `{"all", "object", "properties"}`.
+
+        """
+        self.examples_as_yaml = examples_as_yaml
+
+        valid_show_examples_options = ["all", "object", "properties"]
+        show_examples = show_examples.lower()
+        if show_examples in valid_show_examples_options:
+            self.show_examples = show_examples
+        else:
+            raise ValueError(
+                f"`show_examples` option should be one of "
+                f"`{valid_show_examples_options}`; `{show_examples}` was passed."
+            )
 
     def _construct_description_line(
         self,
@@ -79,8 +104,7 @@ class Parser:
         self,
         obj: Dict,
         indent_level: int = 0,
-        add_header: bool = True,
-        example_as_yaml: bool = False,
+        add_header: bool = True
     ) -> Sequence[str]:
         def dump_json_with_line_head(obj, line_head, **kwargs):
             f = io.StringIO(json.dumps(obj, **kwargs))
@@ -90,7 +114,7 @@ class Parser:
         def dump_yaml_with_line_head(obj, line_head, **kwargs):
             f = io.StringIO(yaml.dump(obj, **kwargs))
             result = [line_head + line for line in f.readlines()]
-            return ''.join(result)
+            return ''.join(result).rstrip()
 
         example_lines = []
         if "examples" in obj:
@@ -98,25 +122,22 @@ class Parser:
             if add_header:
                 example_lines.append(f'\n{example_indentation}Examples:\n')
             for example in obj["examples"]:
-                if example_as_yaml:
-                    example_str = dump_yaml_with_line_head(
-                        example,
-                        line_head=example_indentation,
-                        indent=4
-                    )
-                    example_lines.append(
-                        f"{example_indentation}```yaml\n{example_str}\n{example_indentation}```\n\n"
-                    )
+                if self.examples_as_yaml:
+                    lang = "yaml"
+                    dump_fn = dump_yaml_with_line_head
                 else:
-                    example_str = dump_json_with_line_head(
-                        example,
-                        line_head=example_indentation,
-                        indent=4
-                    )
-                    example_lines.append(
-                        f"{example_indentation}```json\n{example_str}\n{example_indentation}```\n\n"
-                    )
-
+                    lang = "json"
+                    dump_fn = dump_json_with_line_head
+                example_str = dump_fn(
+                    example,
+                    line_head=example_indentation,
+                    indent=4
+                )
+                example_lines.append(
+                    f"{example_indentation}```{lang}\n"
+                    f"{example_str}\n"
+                    f"{example_indentation}```\n\n"
+                )
         return example_lines
 
     def _parse_object(
@@ -126,8 +147,6 @@ class Parser:
         name_monospace: bool = True,
         output_lines: Optional[str] = None,
         indent_level: int = 0,
-        example_as_yaml: bool = False,
-        show_example: str = 'all'
     ) -> Sequence[str]:
         """Parse JSON object and its items, definitions, and properties recursively."""
         if not isinstance(obj, dict):
@@ -161,9 +180,7 @@ class Parser:
                     name,
                     name_monospace=False,
                     output_lines=output_lines,
-                    indent_level=indent_level + 1,
-                    example_as_yaml=example_as_yaml,
-                    show_example=show_example
+                    indent_level=indent_level + 1
                 )
 
         # Recursively add child properties
@@ -174,21 +191,20 @@ class Parser:
                     property_name,
                     output_lines=output_lines,
                     indent_level=indent_level + 1,
-                    example_as_yaml=example_as_yaml,
-                    show_example=show_example
                 )
 
         # Add examples
-        if (show_example == 'all' or show_example == 'propertie'):
+        if self.show_examples in ["all", "properties"]:
             output_lines.extend(
-                self._construct_examples(obj, indent_level=indent_level, example_as_yaml=example_as_yaml)
+                self._construct_examples(obj, indent_level=indent_level)
             )
 
         return output_lines
 
-    def parse_schema(self, schema_object: Dict, show_example: str = 'all', example_as_yaml: bool = False) -> Sequence[str]:
+    def parse_schema(self, schema_object: Dict) -> Sequence[str]:
         """Parse JSON Schema object to markdown text."""
         output_lines = []
+
         # Add title and description
         if "title" in schema_object:
             output_lines.append(f"# {schema_object['title']}\n\n")
@@ -202,13 +218,13 @@ class Parser:
             if name.lower() in schema_object:
                 output_lines.append(f"## {name}\n\n")
                 for obj_name, obj in schema_object[name.lower()].items():
-                    output_lines.extend(self._parse_object(obj, obj_name, example_as_yaml=example_as_yaml, show_example=show_example))
+                    output_lines.extend(self._parse_object(obj, obj_name))
 
         # Add examples
-        if "examples" in schema_object and (show_example == 'all' or show_example == 'object'):
+        if "examples" in schema_object and self.show_examples in ["all", "object"]:
             output_lines.append("## Examples\n\n")
             output_lines.extend(self._construct_examples(
-                schema_object, indent_level=0, add_header=False, example_as_yaml=example_as_yaml
+                schema_object, indent_level=0, add_header=False
             ))
 
         return output_lines
@@ -218,12 +234,25 @@ class Parser:
 @click.version_option(version=__version__)
 @click.argument("input-json", type=click.File("rt"), metavar="<input.json>")
 @click.argument("output-markdown", type=click.File("wt"), metavar="<output.md>")
-@click.option("--example-as-yaml", type=bool, default=False, help="Show example as yaml format (default json)")
-@click.option("--show-example", type=click.Choice(['all', 'propertie', 'object', 'any'], case_sensitive=False), default='all', help="Selected type example to show")
-def main(input_json, output_markdown, example_as_yaml, show_example):
+@click.option(
+    "--examples-as-yaml",
+    type=bool,
+    default=False,
+    help="Parse examples in YAML-format instead of JSON."
+)
+@click.option(
+    "--show-examples",
+    type=click.Choice(['all', 'properties', 'object'], case_sensitive=False),
+    default='all',
+    help="Parse examples for only the main object, only properties, or all."
+)
+def main(input_json, output_markdown, examples_as_yaml, show_examples):
     """Convert JSON Schema to Markdown documentation."""
-    parser = Parser()
-    output_md = parser.parse_schema(json.load(input_json), example_as_yaml=example_as_yaml, show_example=show_example )
+    parser = Parser(
+        examples_as_yaml=examples_as_yaml,
+        show_examples=show_examples
+    )
+    output_md = parser.parse_schema(json.load(input_json))
     output_markdown.writelines(output_md)
     click.secho("✔ Successfully parsed schema!", bold=True, fg="green")
 

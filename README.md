@@ -55,63 +55,39 @@ Install with pip
 pip install jsonschema2md
 ```
 
+
 ## Usage
 
 ### From the CLI
 
 ```sh
-jsonschema2md <input.json> <output.md>
+jsonschema2md [OPTIONS] <input.json> <output.md>
 ```
+
 
 ### From Python
 
 ```python
-import jsonschema2md
 import json
+import jsonschema2md
 
-with open("./examples/food.json","r") as json_file: input_json = json.load(json_file);
-
-parser = jsonschema2md.Parser()
-md_lines = parser.parse_schema(input_json)
+parser = jsonschema2md.Parser(
+    examples_as_yaml=False,
+    show_examples="all",
+)
+with open("./examples/food.json", "r") as json_file:
+    md_lines = parser.parse_schema(json.load(json_file))
 print(''.join(md_lines))
 ```
 
+
 ### Options
 
-- Show example as Yaml format instead of JSON using `example_as_yaml` boolean (default `false`):
+- `examples_as_yaml`: Parse examples in YAML-format instead of JSON. (`bool`, default:
+  `False`)
+- `show_examples`: Parse examples for only the main object, only properties, or all.
+(`str`, default `all`, options: `object`, `properties`, `all`)
 
-  ```python
-  md_lines = parser.parse_schema(input_json, example_as_yaml=True)
-  print(''.join(md_lines))
-  ```
-
-  ```sh
-  jsonschema2md --example-as-yaml True <input.json> <output.md>
-  ```
-
-- Selecte if you want to show all example or juste for Object or Propertie section (default `all`)
-
-  ```python
-  ## Show all examples
-  md_lines = parser.parse_schema(input_json, show_example='all')
-  print(''.join(md_lines))
-
-  ## Show only object section examples
-  md_lines = parser.parse_schema(input_json, show_example='object')
-  print(''.join(md_lines))
-
-  ## Show only properties section examples
-  md_lines = parser.parse_schema(input_json, show_example='propertie')
-  print(''.join(md_lines))
-
-  ## Don't Show examples
-  md_lines = parser.parse_schema(input_json, show_example='any')
-  print(''.join(md_lines))
-  ```
-
-  ```sh
-  jsonschema2md --show-example object <input.json> <output.md>
-  ```
 
 ## Contributing
 

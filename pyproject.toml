@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "jsonschema2md"
-version = "0.2.2"
+version = "0.3.0"
 description = "Convert JSON Schema to human-readable Markdown documentation"
 authors = ["Ralf Gabriels <ralfg@hotmail.be>"]
 license = "Apache-2.0"
@@ -22,8 +22,9 @@ jsonschema2md = 'jsonschema2md:main'
 
 [tool.poetry.dependencies]
 python = "^3.6"
-click = "^7"
+click = ">=7"
 importlib_metadata = { version = "^1", python = "<3.8"}
+PyYAML = ">=5.1"
 
 [tool.poetry.dev-dependencies]
 flake8 = "^3.8.3"
