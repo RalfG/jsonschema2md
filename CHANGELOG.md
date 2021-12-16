@@ -5,10 +5,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [0.2.2] - 04/09/2021
-- Fix Fenced code blocks should be surrounded by blank lines (Issue #4)
-- Add `example_as_yaml` option
-- Add `show_example` option
+## [0.3.0] - 16/12/2021
+
+### Bug fixes
+- Add `\n\n` at the end of example block (thanks @mysiki!)
+  - Fixes #4
+- Relax Click version requirement
+  - Fixes #7
+
+### New features
+- Option `examples-as-yaml` to show examples in YAML-format instead of JSON
+- Option `show-example` to select which examples need to be parsed: `all`, `object`, or `properties`
 
 ## [0.2.1] - 05/08/2021
 - Fix broken indentation for examples section (PR #3, thanks @KatekovAnton!)
