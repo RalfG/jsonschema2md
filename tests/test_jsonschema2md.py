@@ -33,24 +33,20 @@ class TestParser:
         "examples": [
             {
                 "fruits": ["apple", "orange"],
-                "vegetables": [{"veggieName": "cabbage", "veggieLike": True}]
+                "vegetables": [{"veggieName": "cabbage", "veggieLike": True}],
             }
         ],
     }
 
     def test_construct_description_line(self):
         test_cases = [
-            {
-                "input": {},
-                "add_type": False,
-                "expected_output": ""
-            },
+            {"input": {}, "add_type": False, "expected_output": ""},
             {
                 "input": {
                     "description": "The name of the vegetable.",
                 },
                 "add_type": False,
-                "expected_output": ": The name of the vegetable."
+                "expected_output": ": The name of the vegetable.",
             },
             {
                 "input": {
@@ -58,7 +54,7 @@ class TestParser:
                     "default": "eggplant",
                     "type": "string",
                     "$ref": "#/definitions/veggies",
-                    "enum": ["eggplant", "spinach", "cabbage"]
+                    "enum": ["eggplant", "spinach", "cabbage"],
                 },
                 "add_type": True,
                 "expected_output": (
@@ -66,7 +62,7 @@ class TestParser:
                     "Must be one of: `['eggplant', 'spinach', 'cabbage']`. "
                     "Refer to *#/definitions/veggies*. "
                     "Default: `eggplant`."
-                )
+                ),
             },
             {
                 "input": {
@@ -81,7 +77,7 @@ class TestParser:
                 "expected_output": (
                     ": Number of vegetables. Minimum: `0`. Maximum: `999`. "
                     "Can contain additional properties. Default: `0`."
-                )
+                ),
             },
             {
                 "input": {
@@ -94,31 +90,61 @@ class TestParser:
                 "expected_output": (
                     ": List of vegetables. Cannot contain additional properties. "
                     "Default: `[]`."
-                )
-            }
+                ),
+            },
         ]
 
         parser = jsonschema2md.Parser()
 
         for case in test_cases:
-            observed_output = " ".join(parser._construct_description_line(
-                case["input"], add_type=case["add_type"]
-            ))
+            observed_output = " ".join(
+                parser._construct_description_line(
+                    case["input"], add_type=case["add_type"]
+                )
+            )
             assert case["expected_output"] == observed_output
 
     def test_parse_object(self):
         parser = jsonschema2md.Parser()
-        expected_output = [
-            '- **`fruits`** *(array)*\n',
-            '  - **Items** *(string)*\n'
-        ]
+        expected_output = ["- **`fruits`** *(array)*\n", "  - **Items** *(string)*\n"]
         assert expected_output == parser._parse_object(
-            self.test_schema["properties"]["fruits"],
-            "fruits"
+            self.test_schema["properties"]["fruits"], "fruits"
         )
 
     def test_parse_schema(self):
         parser = jsonschema2md.Parser()
+        expected_output = [
+            "# JSON Schema\n\n",
+            "*Vegetable preferences*\n\n",
+            "## Properties\n\n",
+            "- **`fruits`** *(array)*\n",
+            "  - **Items** *(string)*\n",
+            "- **`vegetables`** *(array)*\n",
+            "  - **Items**: Refer to *#/definitions/veggie*.\n",
+            "## Definitions\n\n",
+            "- **`veggie`** *(object)*\n",
+            "  - **`veggieName`** *(string)*: The name of the vegetable.\n",
+            "  - **`veggieLike`** *(boolean)*: Do I like this vegetable?\n",
+            "## Examples\n\n",
+            "  ```json\n"
+            "  {\n"
+            '      "fruits": [\n'
+            '          "apple",\n'
+            '          "orange"\n'
+            "      ],\n"
+            '      "vegetables": [\n'
+            "          {\n"
+            '              "veggieName": "cabbage",\n'
+            '              "veggieLike": true\n'
+            "          }\n"
+            "      ]\n"
+            "  }\n"
+            "  ```\n\n",
+        ]
+        assert expected_output == parser.parse_schema(self.test_schema)
+
+    def test_parse_schema_examples_yaml(self):
+        parser = jsonschema2md.Parser(examples_as_yaml=True)
         expected_output = [
             '# JSON Schema\n\n',
             '*Vegetable preferences*\n\n',
@@ -132,19 +158,6 @@ class TestParser:
             '  - **`veggieName`** *(string)*: The name of the vegetable.\n',
             '  - **`veggieLike`** *(boolean)*: Do I like this vegetable?\n',
             '## Examples\n\n',
-            '  ```json\n'
-            '  {\n'
-            '      "fruits": [\n'
-            '          "apple",\n'
-            '          "orange"\n'
-            '      ],\n'
-            '      "vegetables": [\n'
-            '          {\n'
-            '              "veggieName": "cabbage",\n'
-            '              "veggieLike": true\n'
-            '          }\n'
-            '      ]\n'
-            '  }\n'
-            '  ```\n\n'
+            '  ```yaml\n  fruits:\n  - apple\n  - orange\n  vegetables:\n  -   veggieLike: true\n      veggieName: cabbage\n  ```\n\n'
         ]
         assert expected_output == parser.parse_schema(self.test_schema)
