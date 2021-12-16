@@ -50,8 +50,9 @@ directory for more elaborate examples.
 ## Installation
 
 Install with pip
+
 ```sh
-$ pip install jsonschema2md
+pip install jsonschema2md
 ```
 
 
@@ -60,17 +61,32 @@ $ pip install jsonschema2md
 ### From the CLI
 
 ```sh
-$ jsonschema2md <input.json> <output.md>
+jsonschema2md [OPTIONS] <input.json> <output.md>
 ```
 
 
 ### From Python
 
 ```python
+import json
 import jsonschema2md
-parser = jsonschema2md.Parser()
-md_lines = parser.parse_schema(json.load(input_json))
+
+parser = jsonschema2md.Parser(
+    examples_as_yaml=False,
+    show_examples="all",
+)
+with open("./examples/food.json", "r") as json_file:
+    md_lines = parser.parse_schema(json.load(json_file))
+print(''.join(md_lines))
 ```
+
+
+### Options
+
+- `examples_as_yaml`: Parse examples in YAML-format instead of JSON. (`bool`, default:
+  `False`)
+- `show_examples`: Parse examples for only the main object, only properties, or all.
+(`str`, default `all`, options: `object`, `properties`, `all`)
 
 
 ## Contributing
