@@ -172,26 +172,37 @@ class Parser:
             f"{indentation}- {name_formatted}{obj_type}{description_line}\n"
         )
 
-        # Recursively add items and definitions:
-        for name in ["Items", "Definitions"]:
-            if name.lower() in obj:
+        # Recursively add items and definitions
+        for name in ["items", "definitions"]:
+            if name in obj:
                 output_lines = self._parse_object(
-                    obj[name.lower()],
-                    name,
+                    obj[name],
+                    name.capitalize(),
                     name_monospace=False,
                     output_lines=output_lines,
                     indent_level=indent_level + 1
                 )
 
+        # Recursively add additional child properties
+        if "additionalProperties" in obj and isinstance(obj["additionalProperties"], dict):
+            output_lines = self._parse_object(
+                obj["additionalProperties"],
+                "Additional Properties",
+                name_monospace=False,
+                output_lines=output_lines,
+                indent_level=indent_level + 1
+            )
+
         # Recursively add child properties
-        if "properties" in obj:
-            for property_name, property_obj in obj["properties"].items():
-                output_lines = self._parse_object(
-                    property_obj,
-                    property_name,
-                    output_lines=output_lines,
-                    indent_level=indent_level + 1,
-                )
+        for name in ["properties", "patternProperties"]:
+            if name in obj:
+                for property_name, property_obj in obj[name].items():
+                    output_lines = self._parse_object(
+                        property_obj,
+                        property_name,
+                        output_lines=output_lines,
+                        indent_level=indent_level + 1,
+                    )
 
         # Add examples
         if self.show_examples in ["all", "properties"]:
@@ -213,11 +224,35 @@ class Parser:
         if "description" in schema_object:
             output_lines.append(f"*{schema_object['description']}*\n\n")
 
+        # Add items
+        if "items" in schema_object:
+            output_lines.append(f"## Items\n\n")
+            output_lines.extend(self._parse_object(
+                schema_object["items"],
+                "Items",
+                name_monospace=False
+            ))
+
+        # Add additional properties
+        if "additionalProperties" in schema_object and isinstance(schema_object["additionalProperties"], dict):
+            output_lines.append(f"## Additional Properties\n\n")
+            output_lines.extend(self._parse_object(
+                schema_object["additionalProperties"],
+                "Additional Properties",
+                name_monospace=False
+            ))
+
+        # Add pattern properties
+        if "patternProperties" in schema_object:
+            output_lines.append(f"## Pattern Properties\n\n")
+            for obj_name, obj in schema_object["patternProperties"].items():
+                output_lines.extend(self._parse_object(obj, obj_name))
+
         # Add properties and definitions
-        for name in ["Properties", "Definitions"]:
-            if name.lower() in schema_object:
-                output_lines.append(f"## {name}\n\n")
-                for obj_name, obj in schema_object[name.lower()].items():
+        for name in ["properties", "definitions"]:
+            if name in schema_object:
+                output_lines.append(f"## {name.capitalize()}\n\n")
+                for obj_name, obj in schema_object[name].items():
                     output_lines.extend(self._parse_object(obj, obj_name))
 
         # Add examples
