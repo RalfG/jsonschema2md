@@ -44,3 +44,9 @@ about:
   summary: Convert JSON Schemas to simple, human-readable Markdown documentation.
   license: {{ data.get('license') }}
   license_file: LICENSE
+
+extra:
+  recipe-maintainers:
+    # GitHub IDs for maintainers of the recipe.
+    # Always check with the people listed below if they are OK becoming maintainers of the recipe. (There will be spam!)
+    - ollyhensby
