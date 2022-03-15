@@ -61,9 +61,12 @@ or install with conda from the conda-forge channel
 conda install jsonschema2md
 ```
 
-```{note}
-Make sure you have the conda-forge channel added to your config.
+Note: Make sure you have the conda-forge channel added to your config.
+
+```sh
+conda config --add channels conda-forge
 ```
+
 
 ## Usage
 
