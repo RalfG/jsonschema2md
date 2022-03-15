@@ -55,6 +55,15 @@ Install with pip
 pip install jsonschema2md
 ```
 
+or install with conda from the conda-forge channel
+
+```sh
+conda install jsonschema2md
+```
+
+```{note}
+Make sure you have the conda-forge channel added to your config.
+```
 
 ## Usage
 
