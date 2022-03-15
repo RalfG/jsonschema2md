@@ -1,11 +1,6 @@
 """Test jsonschema2md."""
 
-import pathlib
-import sys
-DIR_MODULE = pathlib.Path(__file__).parents[1] / "src"
-sys.path.append(str(DIR_MODULE))
-
-import json2mdschema
+from jsonschema2md import jsonschema2md
 
 
 class TestParser:
