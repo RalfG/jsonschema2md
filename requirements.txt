@@ -1,0 +1,5 @@
+click==8.0.4
+importlib_metadata==4.11.3
+PyYAML==6.0
+versioneer==0.22
+poetry>=0.12

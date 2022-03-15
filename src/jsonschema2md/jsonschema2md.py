@@ -19,7 +19,6 @@ from typing import Dict, Optional, Sequence
 import click
 import yaml
 
-__version__ = version('jsonschema2md')
 
 
 class Parser:
@@ -266,7 +265,7 @@ class Parser:
 
 
 @click.command()
-@click.version_option(version=__version__)
+#@click.version_option(version=__version__)
 @click.argument("input-json", type=click.File("rt"), metavar="<input.json>")
 @click.argument("output-markdown", type=click.File("wt"), metavar="<output.md>")
 @click.option(

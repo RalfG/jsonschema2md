@@ -1,0 +1,2 @@
+include versioneer.py
+include src/jsonschema2md/_version.py
