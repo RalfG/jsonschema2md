@@ -143,7 +143,7 @@ class Parser:
     def _parse_object(
         self,
         obj: Dict,
-        name: str,
+        name: Optional[str],
         name_monospace: bool = True,
         output_lines: Optional[str] = None,
         indent_level: int = 0,
@@ -166,11 +166,33 @@ class Parser:
 
         # Add full line to output
         description_line = " ".join(description_line)
-        obj_type = f" *({obj['type']})*" if "type" in obj else ""
-        name_formatted = f"**`{name}`**" if name_monospace else f"**{name}**"
+        if name is None:
+            obj_type = f"*{obj['type']}*" if "type" in obj else ""
+            name_formatted = ""
+        else:
+            obj_type = f" *({obj['type']})*" if "type" in obj else ""
+            name_formatted = f"**`{name}`**" if name_monospace else f"**{name}**"
         output_lines.append(
             f"{indentation}- {name_formatted}{obj_type}{description_line}\n"
         )
+        
+        # Recursively parse subschemas following schema composition keywords
+        schema_composition_keyword_map = {
+            "allOf": "All of", "anyOf": "Any of", "oneOf": "One of"
+        }
+        for key, label in schema_composition_keyword_map.items():
+            if key in obj:
+                output_lines.append(
+                    f"{indentation_items}- **{label}**\n"
+                )
+                for child_obj in obj[key]:
+                    output_lines = self._parse_object(
+                        child_obj,
+                        None,
+                        name_monospace=False,
+                        output_lines=output_lines,
+                        indent_level=indent_level + 2
+                    )
 
         # Recursively add items and definitions
         for name in ["items", "definitions"]:
