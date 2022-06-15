@@ -91,6 +91,20 @@ class TestParser:
             },
             {
                 "input": {
+                    "description": "Number of vegetables",
+                    "default": 1,
+                    "type": "integer",
+                    "exclusiveMinimum": 0,
+                    "exclusiveMaximum": 1000,
+                },
+                "add_type": False,
+                "expected_output": (
+                    ": Number of vegetables. Exclusive minimum: `0`. "
+                    "Exclusive maximum: `1000`. Default: `1`."
+                ),
+            },
+            {
+                "input": {
                     "description": "List of vegetables",
                     "default": [],
                     "type": "array",
