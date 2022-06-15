@@ -80,8 +80,12 @@ class Parser:
                 description_line.append(f"Must be of type *{obj['type']}*.")
         if "minimum" in obj:
             description_line.append(f"Minimum: `{obj['minimum']}`.")
+        if "exclusiveMinimum" in obj:
+            description_line.append(f"Exclusive minimum: `{obj['exclusiveMinimum']}`.")
         if "maximum" in obj:
             description_line.append(f"Maximum: `{obj['maximum']}`.")
+        if "exclusiveMaximum" in obj:
+            description_line.append(f"Exclusive maximum: `{obj['exclusiveMaximum']}`.")
         if "enum" in obj:
             description_line.append(f"Must be one of: `{obj['enum']}`.")
         if "additionalProperties" in obj:
