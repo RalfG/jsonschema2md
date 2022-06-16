@@ -69,9 +69,9 @@ class TestParser:
                 "add_type": True,
                 "expected_output": (
                     ": The name of the vegetable. Must be of type *string*. "
-                    "Must be one of: `['eggplant', 'spinach', 'cabbage']`. "
+                    "Must be one of: `[\"eggplant\", \"spinach\", \"cabbage\"]`. "
                     "Refer to *#/definitions/veggies*. "
-                    "Default: `eggplant`."
+                    "Default: `\"eggplant\"`."
                 ),
             },
             {

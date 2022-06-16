@@ -83,7 +83,7 @@ class Parser:
         if "maximum" in obj:
             description_line.append(f"Maximum: `{obj['maximum']}`.")
         if "enum" in obj:
-            description_line.append(f"Must be one of: `{obj['enum']}`.")
+            description_line.append(f"Must be one of: `{json.dumps(obj['enum'])}`.")
         if "additionalProperties" in obj:
             if obj["additionalProperties"]:
                 description_line.append("Can contain additional properties.")
@@ -92,7 +92,7 @@ class Parser:
         if "$ref" in obj:
             description_line.append(f"Refer to *{obj['$ref']}*.")
         if "default" in obj:
-            description_line.append(f"Default: `{obj['default']}`.")
+            description_line.append(f"Default: `{json.dumps(obj['default'])}`.")
 
         # Only add start colon if items were added
         if description_line:
