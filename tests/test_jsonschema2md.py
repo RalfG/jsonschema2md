@@ -102,6 +102,64 @@ class TestParser:
                     "Default: `[]`."
                 ),
             },
+            {
+                "input": {
+                    "description": "List of vegetables",
+                    "default": ["Carrot"],
+                    "type": "array",
+                    "minItems": 1,
+                },
+                "add_type": False,
+                "expected_output": (
+                    ": List of vegetables. "
+                    "Length must be at least 1. "
+                    "Default: `['Carrot']`."
+                ),
+            },
+            {
+                "input": {
+                    "description": "List of vegetables",
+                    "default": ["Carrot"],
+                    "type": "array",
+                    "maxItems": 10,
+                },
+                "add_type": False,
+                "expected_output": (
+                    ": List of vegetables. "
+                    "Length must be at most 10. "
+                    "Default: `['Carrot']`."
+                ),
+            },
+            {
+                "input": {
+                    "description": "List of vegetables",
+                    "default": ["Carrot"],
+                    "type": "array",
+                    "minItems": 1,
+                    "maxItems": 10,
+                },
+                "add_type": False,
+                "expected_output": (
+                    ": List of vegetables. "
+                    "Length must be between 1 and 10 (inclusive). "
+                    "Default: `['Carrot']`."
+                ),
+            },
+            {
+                "input": {
+                    "description": "List of vegetables",
+                    "default": ["Carrot", "Mushroom", "Cabbage", "Broccoli", "Leek"],
+                    "type": "array",
+                    "minItems": 5,
+                    "maxItems": 5,
+                },
+                "add_type": False,
+                "expected_output": (
+                    ": List of vegetables. "
+                    "Length must be equal to 5. "
+                    "Default: `['Carrot', 'Mushroom', 'Cabbage', 'Broccoli', 'Leek']`."
+                ),
+            },
         ]
 
         parser = jsonschema2md.Parser()

@@ -82,6 +82,19 @@ class Parser:
             description_line.append(f"Minimum: `{obj['minimum']}`.")
         if "maximum" in obj:
             description_line.append(f"Maximum: `{obj['maximum']}`.")
+        if "minItems" in obj or "maxItems" in obj:
+            length_description = "Length must be "
+            if "minItems" in obj and "maxItems" not in obj:
+                length_description += f"at least {obj['minItems']}."
+            elif "maxItems" in obj and "minItems" not in obj:
+                length_description += f"at most {obj['maxItems']}."
+            elif obj["minItems"] == obj["maxItems"]:
+                length_description += f"equal to {obj['minItems']}."
+            else:
+                length_description += (
+                    f"between {obj['minItems']} and {obj['maxItems']} (inclusive)."
+                )
+            description_line.append(length_description)
         if "enum" in obj:
             description_line.append(f"Must be one of: `{obj['enum']}`.")
         if "additionalProperties" in obj:
