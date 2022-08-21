@@ -1,7 +1,13 @@
 """Test jsonschema2md."""
 
+import os
+import shutil
+import tempfile
 
 import jsonschema2md
+from jsonschema2md import write_lines_between_token
+
+TEST_DIR = os.path.dirname(os.path.realpath(__file__))
 
 
 class TestParser:
@@ -249,3 +255,59 @@ class TestParser:
         ]
 
         assert expected_output == parser.parse_schema(test_schema)
+
+    def test_token_replacement(self):
+        parser = jsonschema2md.Parser()
+
+        fruit_schema = {
+            "$id": "https://example.com/arrays.schema.json",
+            "$schema": "http://json-schema.org/draft-07/schema#",
+            "title": "Fruits",
+            "description": "Fruits I like",
+            "type": "array",
+            "items": {
+                "description": "A list of fruits",
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "description": "The name of the fruit",
+                        "type": "string"
+                    },
+                    "sweet": {
+                        "description": "Whether it is sweet or not",
+                        "type": "boolean",
+                    }
+                }
+            },
+        }
+        veg_schema = {
+            "$id": "https://example.com/arrays.schema.json",
+            "$schema": "http://json-schema.org/draft-07/schema#",
+            "title": "Veggies",
+            "description": "Veggies I like",
+            "type": "array",
+            "items": {
+                "description": "A list of veggies",
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "description": "The name of the veggie",
+                        "type": "string"
+                    }
+                }
+            },
+        }
+        
+        out_file = tempfile.NamedTemporaryFile()
+        shutil.copy2(f"{TEST_DIR}/templates/template.md", out_file.name)
+
+        with open(f"{TEST_DIR}/templates/rendered_template.md") as f:
+            expected_output = f.read()
+
+        write_lines_between_token(out_file.name, parser.parse_schema(fruit_schema), "fruits")
+        write_lines_between_token(out_file.name, parser.parse_schema(veg_schema), "veggies")
+
+        with open(out_file.name) as f:
+            assert expected_output == f.read()
+
+

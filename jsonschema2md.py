@@ -265,6 +265,28 @@ class Parser:
         return output_lines
 
 
+def write_lines_between_token(output_markdown: str, lines: Sequence[str], token: str):
+    """Write lines to markdown file between two tokens."""
+    start_token_found = False
+    end_token_found = False
+
+    with open(output_markdown, "r") as f:
+        lines_old = f.readlines()
+    with open(output_markdown, "w") as f:
+        for line in lines_old:
+            f.write(line)
+            if f"<!--- {token}:START -->" in line:
+                start_token_found = True
+                for line in lines:
+                    f.write(line)
+            if f"<!--- {token}:END -->" in line:
+                end_token_found = True
+    if not start_token_found and end_token_found:
+        raise ValueError(
+            f"Expected to find `{token}:START` and `{token}:END` comments in file `{output_markdown}`."
+        )
+
+
 @click.command()
 @click.version_option(version=__version__)
 @click.argument("input-json", type=click.File("rt"), metavar="<input.json>")
@@ -281,15 +303,24 @@ class Parser:
     default='all',
     help="Parse examples for only the main object, only properties, or all."
 )
-def main(input_json, output_markdown, examples_as_yaml, show_examples):
+@click.option(
+    "--token",
+    type=str,
+    default=None,
+    help="token for a pair of markdown comments inbetween which to replace the generated markdown."
+)
+def main(input_json, output_markdown, examples_as_yaml, show_examples, token):
     """Convert JSON Schema to Markdown documentation."""
     parser = Parser(
         examples_as_yaml=examples_as_yaml,
         show_examples=show_examples
     )
     output_md = parser.parse_schema(json.load(input_json))
-    output_markdown.writelines(output_md)
     click.secho("✔ Successfully parsed schema!", bold=True, fg="green")
+    if token:
+        write_lines_between_token(output_markdown.name, output_md, token)
+    else: 
+        output_markdown.writelines(output_md)
 
 
 if __name__ == "__main__":
