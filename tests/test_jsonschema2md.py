@@ -310,4 +310,52 @@ class TestParser:
         with open(out_file.name) as f:
             assert expected_output == f.read()
 
+    def test_schema_composition_keywords(self):
+        parser = jsonschema2md.Parser()
+        test_schema = {
+            "$id": "https://example.com/arrays.schema.json",
+            "$schema": "http://json-schema.org/draft-07/schema#",
+            "description": "Schema composition test case",
+            "type": "object",
+            "properties": {
+                "all_of_example": {
+                    "allOf": [
+                        { "type": "number" },
+                        { "type": "integer" },
+                    ]
+                },
+                "any_of_example": {
+                    "anyOf": [
+                        { "type": "string" },
+                        { "type": "number", "minimum": 0 }
+                    ]
+                },
+                "one_of_example": {
+                    "default": [1, 2, 3],
+                    "oneOf": [
+                        { "type": "null" },
+                        { "type": "array", "items": {"type": "number"}},
+                    ]
+                },
 
+            }
+        }
+        expected_output = [
+            "# JSON Schema\n\n",
+            "*Schema composition test case*\n\n",
+            "## Properties\n\n",
+            "- **`all_of_example`**\n",
+            "  - **All of**\n",
+            "    - *number*\n",
+            "    - *integer*\n",
+            "- **`any_of_example`**\n",
+            "  - **Any of**\n",
+            "    - *string*\n",
+            "    - *number*: Minimum: `0`.\n",
+            "- **`one_of_example`**: Default: `[1, 2, 3]`.\n",
+            "  - **One of**\n",
+            "    - *null*\n",
+            "    - *array*\n",
+            "      - **Items** *(number)*\n"
+        ]
+        assert expected_output == parser.parse_schema(test_schema)
