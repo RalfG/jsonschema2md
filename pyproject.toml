@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "jsonschema2md"
-version = "0.5.1"
+version = "0.6.0"
 description = "Convert JSON Schema to human-readable Markdown documentation"
 authors = ["Ralf Gabriels <ralfg@hotmail.be>", "Stéphane Brunner <steaphen.brunner@gmail.com>"]
 license = "Apache-2.0"
