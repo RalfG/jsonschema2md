@@ -70,7 +70,7 @@ class TestParser:
                 "expected_output": (
                     ": The name of the vegetable. Must be of type *string*. "
                     'Must be one of: `["eggplant", "spinach", "cabbage"]`. '
-                    "Refer to *#/definitions/veggies*. "
+                    "Refer to *[#/definitions/veggies](#definitions/veggies)*. "
                     'Default: `"eggplant"`.'
                 ),
             },
@@ -206,9 +206,9 @@ class TestParser:
             "- **`fruits`** *(array)*\n",
             "  - **Items** *(string)*\n",
             "- **`vegetables`** *(array)*\n",
-            "  - **Items**: Refer to *#/definitions/veggie*.\n",
+            "  - **Items**: Refer to *[#/definitions/veggie](#definitions/veggie)*.\n",
             "## Definitions\n\n",
-            "- **`veggie`** *(object)*\n",
+            "- <a id=\"definitions/veggie\"></a>**`veggie`** *(object)*\n",
             "  - **`veggieName`** *(string)*: The name of the vegetable.\n",
             "  - **`veggieLike`** *(boolean)*: Do I like this vegetable?\n",
             "## Examples\n\n",
@@ -242,9 +242,9 @@ class TestParser:
             "- **`fruits`** *(array)*\n",
             "  - **Items** *(string)*\n",
             "- **`vegetables`** *(array)*\n",
-            "  - **Items**: Refer to *#/definitions/veggie*.\n",
+            "  - **Items**: Refer to *[#/definitions/veggie](#definitions/veggie)*.\n",
             "## Definitions\n\n",
-            "- **`veggie`** *(object)*\n",
+            "- <a id=\"definitions/veggie\"></a>**`veggie`** *(object)*\n",
             "  - **`veggieName`** *(string)*: The name of the vegetable.\n",
             "  - **`veggieLike`** *(boolean)*: Do I like this vegetable?\n",
             "## Examples\n\n",

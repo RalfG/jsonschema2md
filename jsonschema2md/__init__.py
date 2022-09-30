@@ -14,7 +14,7 @@ except ImportError:
 import io
 import json
 import re
-from typing import Dict, Optional, Sequence
+from typing import Dict, List, Optional, Sequence
 
 import click
 import yaml
@@ -97,7 +97,8 @@ class Parser:
             else:
                 description_line.append("Cannot contain additional properties.")
         if "$ref" in obj:
-            description_line.append(f"Refer to *{obj['$ref']}*.")
+
+            description_line.append(f"Refer to *[{obj['$ref']}](#{obj['$ref'][2:]})*.")
         if "default" in obj:
             description_line.append(f"Default: `{json.dumps(obj['default'])}`.")
 
@@ -143,6 +144,7 @@ class Parser:
         name_monospace: bool = True,
         output_lines: Optional[str] = None,
         indent_level: int = 0,
+        path: Optional[List[str]] = None,
     ) -> Sequence[str]:
         """Parse JSON object and its items, definitions, and properties recursively."""
         if not isinstance(obj, dict):
@@ -171,7 +173,10 @@ class Parser:
         else:
             obj_type = f" *({obj['type']})*" if "type" in obj else ""
             name_formatted = f"**`{name}`**" if name_monospace else f"**{name}**"
-        output_lines.append(f"{indentation}- {name_formatted}{obj_type}{description_line}\n")
+        anchor = f"<a id=\"{'/'.join(path)}\"></a>" if path else ""
+        output_lines.append(
+            f"{indentation}- {anchor}{name_formatted}{obj_type}{description_line}\n"
+        )
 
         # Recursively parse subschemas following schema composition keywords
         schema_composition_keyword_map = {
@@ -270,7 +275,8 @@ class Parser:
             if name in schema_object:
                 output_lines.append(f"## {name.capitalize()}\n\n")
                 for obj_name, obj in schema_object[name].items():
-                    output_lines.extend(self._parse_object(obj, obj_name))
+                    path = [name, obj_name] if name == "definitions" else []
+                    output_lines.extend(self._parse_object(obj, obj_name, path=path))
 
         # Add examples
         if "examples" in schema_object and self.show_examples in ["all", "object"]:
