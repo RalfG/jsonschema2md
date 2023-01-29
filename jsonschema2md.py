@@ -67,33 +67,45 @@ class Parser:
     def _construct_description_line(
         self,
         obj: Dict,
-        add_type: bool = False
+        add_type: bool = True
     ) -> Sequence[str]:
         """Construct description line of property, definition, or item."""
         description_line = []
-
+        if "title" in obj:
+            description_line.append(f"`{obj['title']}`. <br>")
         if "description" in obj:
             ending = "" if re.search(r"[.?!;]$", obj["description"]) else "."
-            description_line.append(f"{obj['description']}{ending}")
+            description_line.append(f"> {obj['description']}{ending}  <br>")
         if add_type:
             if "type" in obj:
-                description_line.append(f"Must be of type *{obj['type']}*.")
+                description_line.append(f"> Must be of type: *{obj['type']}*.  <br>")
         if "minimum" in obj:
-            description_line.append(f"Minimum: `{obj['minimum']}`.")
+            description_line.append(f"> Minimum: `{obj['minimum']}`.  <br>")
         if "maximum" in obj:
-            description_line.append(f"Maximum: `{obj['maximum']}`.")
+            description_line.append(f"> Maximum: `{obj['maximum']}`.  <br>")
         if "enum" in obj:
-            description_line.append(f"Must be one of: `{obj['enum']}`.")
+            description_line.append(f"> Must be one of: `{obj['enum']}`.  <br>")
         if "additionalProperties" in obj:
             if obj["additionalProperties"]:
-                description_line.append("Can contain additional properties.")
+                description_line.append("> Can contain additional properties.  <br>")
             else:
-                description_line.append("Cannot contain additional properties.")
+                description_line.append("> Cannot contain additional properties.  <br>")
         if "$ref" in obj:
-            description_line.append(f"Refer to *{obj['$ref']}*.")
+            description_line.append(f"> Refer to *{obj['$ref']}*.  <br>")
         if "default" in obj:
-            description_line.append(f"Default: `{obj['default']}`.")
-
+            description_line.append(f"> Default: `{obj['default']}`.  <br>")
+        if "multipleOf" in obj:
+            description_line.append(f"> Must be a multiple of: `{obj['multipleOf']}`. <br> ")
+        if "minItems" in obj:
+            description_line.append(f"> Minimum Number of Items: `{obj['minItems']}`. <br> ")
+        if "maxItems" in obj:
+            description_line.append(f"> Maximum Number of Items: `{obj['maxItems']}`. <br> ")
+        if "minLength" in obj:
+            description_line.append(f"> Minimum Length: `{obj['minLength']}`. <br> ")
+        if "maxLength" in obj:
+            description_line.append(f"> Maximum Length: `{obj['maxLength']}`. <br> ")
+        if "pattern" in obj:
+            description_line.append(f"> Must follow regex pattern: `{obj['pattern']}`.")
         # Only add start colon if items were added
         if description_line:
             description_line.insert(0, ":")
@@ -144,6 +156,7 @@ class Parser:
         self,
         obj: Dict,
         name: str,
+        requiredobject: bool = False,
         name_monospace: bool = True,
         output_lines: Optional[str] = None,
         indent_level: int = 0,
@@ -166,10 +179,13 @@ class Parser:
 
         # Add full line to output
         description_line = " ".join(description_line)
-        obj_type = f" *({obj['type']})*" if "type" in obj else ""
+        if name != "Items":
+            obj_req = f" *(Required)*" if requiredobject else f" *(Optional)*"
+        else:
+            obj_req = ""
         name_formatted = f"**`{name}`**" if name_monospace else f"**{name}**"
         output_lines.append(
-            f"{indentation}- {name_formatted}{obj_type}{description_line}\n"
+            f"{indentation}- {name_formatted}{obj_req}{description_line}\n"
         )
 
         # Recursively add items and definitions
@@ -197,9 +213,14 @@ class Parser:
         for name in ["properties", "patternProperties"]:
             if name in obj:
                 for property_name, property_obj in obj[name].items():
+                    if property_name in obj["required"]:
+                        requiredobject=True
+                    else:
+                        requiredobject=False
                     output_lines = self._parse_object(
                         property_obj,
                         property_name,
+                        requiredobject,
                         output_lines=output_lines,
                         indent_level=indent_level + 1,
                     )
@@ -253,8 +274,13 @@ class Parser:
             if name in schema_object:
                 output_lines.append(f"## {name.capitalize()}\n\n")
                 for obj_name, obj in schema_object[name].items():
-                    output_lines.extend(self._parse_object(obj, obj_name))
-
+                    if obj_name in schema_object["required"]:
+                        requiredobject=True
+                    else:
+                        requiredobject=False
+                    output_lines.extend(self._parse_object(obj, obj_name,requiredobject))
+        
+       
         # Add examples
         if "examples" in schema_object and self.show_examples in ["all", "object"]:
             output_lines.append("## Examples\n\n")
