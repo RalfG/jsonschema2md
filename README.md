@@ -7,40 +7,42 @@
 ![](https://flat.badgen.net/github/last-commit/ralfg/jsonschema2md)
 ![](https://flat.badgen.net/github/license/ralfg/jsonschema2md)
 
-
-*Convert JSON Schemas to simple, human-readable Markdown documentation.*
+_Convert JSON Schemas to simple, human-readable Markdown documentation._
 
 ---
 
 For example:
+
 ```json
 {
-    "$id": "https://example.com/person.schema.json",
-    "$schema": "http://json-schema.org/draft-07/schema#",
-    "title": "Person",
-    "description": "JSON Schema for a person object.",
-    "type": "object",
-    "properties": {
-      "firstName": {
-        "type": "string",
-        "description": "The person's first name."
-      },
-      "lastName": {
-        "type": "string",
-        "description": "The person's last name."
-      }
+  "$id": "https://example.com/person.schema.json",
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Person",
+  "description": "JSON Schema for a person object.",
+  "type": "object",
+  "properties": {
+    "firstName": {
+      "type": "string",
+      "description": "The person's first name."
+    },
+    "lastName": {
+      "type": "string",
+      "description": "The person's last name."
     }
   }
+}
 ```
 
 will be converted to:
 
 > # Person
-> *JSON Schema for a person object.*
+>
+> _JSON Schema for a person object._
+>
 > ## Properties
 >
-> - **`firstName`** *(string)*: The person's first name.
-> - **`lastName`** *(string)*: The person's last name.
+> - **`firstName`** _(string)_: The person's first name.
+> - **`lastName`** _(string)_: The person's last name.
 
 See the [examples](https://github.com/RalfG/jsonschema2md/tree/master/examples)
 directory for more elaborate examples.
@@ -55,7 +57,6 @@ Install with pip
 pip install jsonschema2md
 ```
 
-
 ## Usage
 
 ### From the CLI
@@ -63,7 +64,6 @@ pip install jsonschema2md
 ```sh
 jsonschema2md [OPTIONS] <input.json> <output.md>
 ```
-
 
 ### From Python
 
@@ -80,14 +80,12 @@ with open("./examples/food.json", "r") as json_file:
 print(''.join(md_lines))
 ```
 
-
 ### Options
 
 - `examples_as_yaml`: Parse examples in YAML-format instead of JSON. (`bool`, default:
   `False`)
 - `show_examples`: Parse examples for only the main object, only properties, or all.
-(`str`, default `all`, options: `object`, `properties`, `all`)
-
+  (`str`, default `all`, options: `object`, `properties`, `all`)
 
 ## Contributing
 
@@ -97,7 +95,15 @@ request! See
 [Contributing.md](https://github.com/RalfG/jsonschema2md/blob/master/CONTRIBUTING.md)
 for more info.
 
-
 ## Changelog
 
 See [Changelog.md](https://github.com/RalfG/jsonschema2md/blob/master/CHANGELOG.md).
+
+## Contributing
+
+Install the pre-commit hooks:
+
+```bash
+pip install pre-commit
+pre-commit install --allow-missing-config
+```

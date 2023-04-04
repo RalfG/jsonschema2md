@@ -110,13 +110,11 @@ class Parser:
 
     def _construct_examples(self, obj: Dict, indent_level: int = 0, add_header: bool = True) -> Sequence[str]:
         def dump_json_with_line_head(obj, line_head, **kwargs):
-            f = io.StringIO(json.dumps(obj, **kwargs))
-            result = [line_head + line for line in f.readlines()]
+            result = [line_head + line for line in io.StringIO(json.dumps(obj, **kwargs)).readlines()]
             return "".join(result)
 
         def dump_yaml_with_line_head(obj, line_head, **kwargs):
-            f = io.StringIO(yaml.dump(obj, **kwargs))
-            result = [line_head + line for line in f.readlines()]
+            result = [line_head + line for line in io.StringIO(yaml.dump(obj, **kwargs)).readlines()]
             return "".join(result).rstrip()
 
         example_lines = []
@@ -133,7 +131,7 @@ class Parser:
                     dump_fn = dump_json_with_line_head
                 example_str = dump_fn(example, line_head=example_indentation, indent=4)
                 example_lines.append(
-                    f"{example_indentation}```{lang}\n" f"{example_str}\n" f"{example_indentation}```\n\n"
+                    f"{example_indentation}```{lang}\n{example_str}\n{example_indentation}```\n\n"
                 )
         return example_lines
 
@@ -174,9 +172,7 @@ class Parser:
             obj_type = f" *({obj['type']})*" if "type" in obj else ""
             name_formatted = f"**`{name}`**" if name_monospace else f"**{name}**"
         anchor = f"<a id=\"{'/'.join(path)}\"></a>" if path else ""
-        output_lines.append(
-            f"{indentation}- {anchor}{name_formatted}{obj_type}{description_line}\n"
-        )
+        output_lines.append(f"{indentation}- {anchor}{name_formatted}{obj_type}{description_line}\n")
 
         # Recursively parse subschemas following schema composition keywords
         schema_composition_keyword_map = {
@@ -197,11 +193,11 @@ class Parser:
                     )
 
         # Recursively add items and definitions
-        for name in ["items", "definitions"]:
-            if name in obj:
+        for property_name in ["items", "definitions"]:
+            if property_name in obj:
                 output_lines = self._parse_object(
-                    obj[name],
-                    name.capitalize(),
+                    obj[property_name],
+                    property_name.capitalize(),
                     name_monospace=False,
                     output_lines=output_lines,
                     indent_level=indent_level + 1,
@@ -218,9 +214,9 @@ class Parser:
             )
 
         # Recursively add child properties
-        for name in ["properties", "patternProperties"]:
-            if name in obj:
-                for property_name, property_obj in obj[name].items():
+        for property_name in ["properties", "patternProperties"]:
+            if property_name in obj:
+                for property_name, property_obj in obj[property_name].items():
                     output_lines = self._parse_object(
                         property_obj,
                         property_name,
@@ -248,14 +244,14 @@ class Parser:
 
         # Add items
         if "items" in schema_object:
-            output_lines.append(f"## Items\n\n")
+            output_lines.append("## Items\n\n")
             output_lines.extend(self._parse_object(schema_object["items"], "Items", name_monospace=False))
 
         # Add additional properties
         if "additionalProperties" in schema_object and isinstance(
             schema_object["additionalProperties"], dict
         ):
-            output_lines.append(f"## Additional Properties\n\n")
+            output_lines.append("## Additional Properties\n\n")
             output_lines.extend(
                 self._parse_object(
                     schema_object["additionalProperties"],
@@ -266,7 +262,7 @@ class Parser:
 
         # Add pattern properties
         if "patternProperties" in schema_object:
-            output_lines.append(f"## Pattern Properties\n\n")
+            output_lines.append("## Pattern Properties\n\n")
             for obj_name, obj in schema_object["patternProperties"].items():
                 output_lines.extend(self._parse_object(obj, obj_name))
 
@@ -311,4 +307,4 @@ def main(input_json, output_markdown, examples_as_yaml, show_examples):
 
 
 if __name__ == "__main__":
-    main()
+    main()  # pylint: disable=no-value-for-parameter
