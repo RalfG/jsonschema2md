@@ -112,8 +112,7 @@ class TestParser:
                 },
                 "add_type": False,
                 "expected_output": (
-                    ": List of vegetables. Cannot contain additional properties. "
-                    "Default: `[]`."
+                    ": List of vegetables. Cannot contain additional properties. " "Default: `[]`."
                 ),
             },
             {
@@ -125,9 +124,7 @@ class TestParser:
                 },
                 "add_type": False,
                 "expected_output": (
-                    ": List of vegetables. "
-                    "Length must be at least 1. "
-                    "Default: `['Carrot']`."
+                    ": List of vegetables. " "Length must be at least 1. " 'Default: `["Carrot"]`.'
                 ),
             },
             {
@@ -139,9 +136,7 @@ class TestParser:
                 },
                 "add_type": False,
                 "expected_output": (
-                    ": List of vegetables. "
-                    "Length must be at most 10. "
-                    "Default: `['Carrot']`."
+                    ": List of vegetables. " "Length must be at most 10. " 'Default: `["Carrot"]`.'
                 ),
             },
             {
@@ -156,7 +151,7 @@ class TestParser:
                 "expected_output": (
                     ": List of vegetables. "
                     "Length must be between 1 and 10 (inclusive). "
-                    "Default: `['Carrot']`."
+                    'Default: `["Carrot"]`.'
                 ),
             },
             {
@@ -171,7 +166,7 @@ class TestParser:
                 "expected_output": (
                     ": List of vegetables. "
                     "Length must be equal to 5. "
-                    "Default: `['Carrot', 'Mushroom', 'Cabbage', 'Broccoli', 'Leek']`."
+                    'Default: `["Carrot", "Mushroom", "Cabbage", "Broccoli", "Leek"]`.'
                 ),
             },
         ]
@@ -180,18 +175,14 @@ class TestParser:
 
         for case in test_cases:
             observed_output = " ".join(
-                parser._construct_description_line(
-                    case["input"], add_type=case["add_type"]
-                )
+                parser._construct_description_line(case["input"], add_type=case["add_type"])
             )
             assert case["expected_output"] == observed_output
 
     def test_parse_object(self):
         parser = jsonschema2md.Parser()
         expected_output = ["- **`fruits`** *(array)*\n", "  - **Items** *(string)*\n"]
-        assert expected_output == parser._parse_object(
-            self.test_schema["properties"]["fruits"], "fruits"
-        )
+        assert expected_output == parser._parse_object(self.test_schema["properties"]["fruits"], "fruits")
 
     def test_parse_schema(self):
         parser = jsonschema2md.Parser()
@@ -199,8 +190,7 @@ class TestParser:
             "# JSON Schema\n\n",
             "*Vegetable preferences*\n\n",
             "## Additional Properties\n" "\n",
-            "- **Additional Properties** *(object)*: Additional info about foods you may "
-            "like.\n",
+            "- **Additional Properties** *(object)*: Additional info about foods you may " "like.\n",
             "  - **`^iLike(Meat|Drinks)$`** *(boolean)*: Do I like it?\n",
             "## Properties\n\n",
             "- **`fruits`** *(array)*\n",
@@ -208,7 +198,7 @@ class TestParser:
             "- **`vegetables`** *(array)*\n",
             "  - **Items**: Refer to *[#/definitions/veggie](#definitions/veggie)*.\n",
             "## Definitions\n\n",
-            "- <a id=\"definitions/veggie\"></a>**`veggie`** *(object)*\n",
+            '- <a id="definitions/veggie"></a>**`veggie`** *(object)*\n',
             "  - **`veggieName`** *(string)*: The name of the vegetable.\n",
             "  - **`veggieLike`** *(boolean)*: Do I like this vegetable?\n",
             "## Examples\n\n",
@@ -235,8 +225,7 @@ class TestParser:
             "# JSON Schema\n\n",
             "*Vegetable preferences*\n\n",
             "## Additional Properties\n" "\n",
-            "- **Additional Properties** *(object)*: Additional info about foods you may "
-            "like.\n",
+            "- **Additional Properties** *(object)*: Additional info about foods you may " "like.\n",
             "  - **`^iLike(Meat|Drinks)$`** *(boolean)*: Do I like it?\n",
             "## Properties\n\n",
             "- **`fruits`** *(array)*\n",
@@ -244,7 +233,7 @@ class TestParser:
             "- **`vegetables`** *(array)*\n",
             "  - **Items**: Refer to *[#/definitions/veggie](#definitions/veggie)*.\n",
             "## Definitions\n\n",
-            "- <a id=\"definitions/veggie\"></a>**`veggie`** *(object)*\n",
+            '- <a id="definitions/veggie"></a>**`veggie`** *(object)*\n',
             "  - **`veggieName`** *(string)*: The name of the vegetable.\n",
             "  - **`veggieLike`** *(boolean)*: Do I like this vegetable?\n",
             "## Examples\n\n",
@@ -325,9 +314,7 @@ class TestParser:
                         {"type": "integer"},
                     ]
                 },
-                "any_of_example": {
-                    "anyOf": [{"type": "string"}, {"type": "number", "minimum": 0}]
-                },
+                "any_of_example": {"anyOf": [{"type": "string"}, {"type": "number", "minimum": 0}]},
                 "one_of_example": {
                     "default": [1, 2, 3],
                     "oneOf": [
