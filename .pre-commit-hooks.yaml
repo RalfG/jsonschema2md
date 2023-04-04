@@ -1,0 +1,5 @@
+- id: jsonschema2md
+  name: Generate the markdown documentation related to a JSON schema
+  entry: jsonschema2md
+  language: python
+  pass_filenames: false

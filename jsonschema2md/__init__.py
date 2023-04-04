@@ -1,8 +1,8 @@
 """Convert JSON Schema to Markdown documentation."""
 
 
-__author__ = "Ralf Gabriels"
-__email__ = "ralfg@hotmail.be"
+__author__ = "Stéphane Brunner"
+__email__ = "stephane.brunner@gmail.com"
 __license__ = "Apache-2.0"
 
 
@@ -11,12 +11,14 @@ try:
 except ImportError:
     from importlib_metadata import version
 
+import argparse
 import io
 import json
 import re
+import subprocess  # nosec
+import sys
 from typing import Dict, List, Optional, Sequence
 
-import click
 import yaml
 
 __version__ = version("jsonschema2md")
@@ -282,29 +284,44 @@ class Parser:
         return output_lines
 
 
-@click.command()
-@click.version_option(version=__version__)
-@click.argument("input-json", type=click.File("rt"), metavar="<input.json>")
-@click.argument("output-markdown", type=click.File("wt"), metavar="<output.md>")
-@click.option(
-    "--examples-as-yaml",
-    type=bool,
-    default=False,
-    help="Parse examples in YAML-format instead of JSON.",
-)
-@click.option(
-    "--show-examples",
-    type=click.Choice(["all", "properties", "object"], case_sensitive=False),
-    default="all",
-    help="Parse examples for only the main object, only properties, or all.",
-)
-def main(input_json, output_markdown, examples_as_yaml, show_examples):
+def main():
     """Convert JSON Schema to Markdown documentation."""
-    parser = Parser(examples_as_yaml=examples_as_yaml, show_examples=show_examples)
-    output_md = parser.parse_schema(json.load(input_json))
-    output_markdown.writelines(output_md)
-    click.secho("✔ Successfully parsed schema!", bold=True, fg="green")
+
+    argparser = argparse.ArgumentParser("Convert JSON Schema to Markdown documentation.")
+    argparser.add_argument("--version", action="store_true", help="Show version and exit.")
+    argparser.add_argument(
+        "--pre-commit", action="store_true", help="Run as pre-commit hook after the generation."
+    )
+    argparser.add_argument(
+        "--examples-as-yaml", action="store_true", help="Parse examples in YAML-format instead of JSON."
+    )
+    argparser.add_argument(
+        "--show-examples",
+        choices=["all", "properties", "object"],
+        default="all",
+        help="Parse examples for only the main object, only properties, or all.",
+    )
+    argparser.add_argument("input_json", help="Input JSON file.")
+    argparser.add_argument("output_markdown", help="Output Markdown file.")
+
+    args = argparser.parse_args()
+
+    if args.version:
+        print(__version__)
+        sys.exit(0)
+
+    parser = Parser(examples_as_yaml=args.examples_as_yaml, show_examples=args.show_examples)
+    with open(args.input_json, encoding="utf-8") as input_json:
+        output_md = parser.parse_schema(json.load(input_json))
+
+    with open(args.output_markdown, "w", encoding="utf-8") as output_markdown:
+        output_markdown.writelines(output_md)
+
+    if args.pre_commit:
+        subprocess.run(  # pylint: disable=subprocess-run-check # nosec
+            ["pre-commit", "run", "--color=never", f"--files={args.output_markdown}"]
+        )
 
 
 if __name__ == "__main__":
-    main()  # pylint: disable=no-value-for-parameter
+    main()

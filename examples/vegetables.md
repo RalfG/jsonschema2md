@@ -7,11 +7,11 @@ _Vegetable preferences_
 - **`fruits`** _(array)_
   - **Items** _(string)_
 - **`vegetables`** _(array)_
-  - **Items**: Refer to _#/definitions/veggie_.
+  - **Items**: Refer to _[#/definitions/veggie](#definitions/veggie)_.
 
 ## Definitions
 
-- **`veggie`** _(object)_
+- <a id="definitions/veggie"></a>**`veggie`** _(object)_
   - **`veggieName`** _(string)_: The name of the vegetable.
   - **`veggieLike`** _(boolean)_: Do I like this vegetable?
 

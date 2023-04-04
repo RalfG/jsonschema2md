@@ -5,7 +5,46 @@ ci:
     - poetry-check
     - poetry-lock
     - ripsecrets
+    - jsonschema2md-basic
+    - jsonschema2md-food
+    - jsonschema2md-ms2rescore
+    - jsonschema2md-vegetables
+
 repos:
+  - repo: local
+    hooks:
+      - &jsonschema2md
+        id: jsonschema2md-basic
+        name: Generate the markdown documentation related to a JSON schema
+        entry: jsonschema2md
+        language: python
+        files: examples/basic.json
+        pass_filenames: false
+        args:
+          - --pre-commit
+          - examples/basic.json
+          - examples/basic.md
+      - <<: *jsonschema2md
+        id: jsonschema2md-food
+        files: examples/food.json
+        args:
+          - --pre-commit
+          - examples/food.json
+          - examples/food.md
+      - <<: *jsonschema2md
+        id: jsonschema2md-ms2rescore
+        files: examples/ms2rescore.json
+        args:
+          - --pre-commit
+          - examples/ms2rescore.json
+          - examples/ms2rescore.md
+      - <<: *jsonschema2md
+        id: jsonschema2md-vegetables
+        files: examples/vegetables.json
+        args:
+          - --pre-commit
+          - examples/vegetables.json
+          - examples/vegetables.md
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v4.4.0
     hooks:

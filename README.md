@@ -87,19 +87,29 @@ print(''.join(md_lines))
 - `show_examples`: Parse examples for only the main object, only properties, or all.
   (`str`, default `all`, options: `object`, `properties`, `all`)
 
+## pre-commit hook
+
+You can use the pre-commit hook with:
+
+```yaml
+repos:
+  - repo: https://github.com/sbrunner/jsonschema2md2
+    hooks:
+      - id: jsonschema2md
+        files: schema.json
+        args:
+          - --pre-commit
+          - schema.json
+          - schema.md
+```
+
 ## Contributing
 
 Bugs, questions or suggestions? Feel free to post an issue in the
-[issue tracker](https://github.com/RalfG/jsonschema2md/issues/) or to make a pull
+[issue tracker](https://github.com/sbrunner/jsonschema2md2/issues/) or to make a pull
 request! See
-[Contributing.md](https://github.com/RalfG/jsonschema2md/blob/master/CONTRIBUTING.md)
+[Contributing.md](https://github.com/sbrunner/jsonschema2md2/blob/master/CONTRIBUTING.md)
 for more info.
-
-## Changelog
-
-See [Changelog.md](https://github.com/RalfG/jsonschema2md/blob/master/CHANGELOG.md).
-
-## Contributing
 
 Install the pre-commit hooks:
 
@@ -107,3 +117,7 @@ Install the pre-commit hooks:
 pip install pre-commit
 pre-commit install --allow-missing-config
 ```
+
+## Changelog
+
+See [Changelog.md](https://github.com/RalfG/jsonschema2md/blob/master/CHANGELOG.md).
