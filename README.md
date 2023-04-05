@@ -96,6 +96,7 @@ repos:
   - repo: https://github.com/sbrunner/jsonschema2md2
     hooks:
       - id: jsonschema2md
+        rev: <version> # Use the ref you want to point at
         files: schema.json
         args:
           - --pre-commit
