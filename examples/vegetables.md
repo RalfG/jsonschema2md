@@ -14,6 +14,10 @@ _Vegetable preferences_
 - <a id="definitions/veggie"></a>**`veggie`** _(object)_
   - **`veggieName`** _(string)_: The name of the vegetable.
   - **`veggieLike`** _(boolean)_: Do I like this vegetable?
+  - **`type_number`** _(array)_: The type and number of vegetable.
+    - **Items**:
+      - _string_: The type of the vegetable.
+      - _number_: The number of vegetable.
 
 ## Examples
 

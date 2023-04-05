@@ -19,6 +19,14 @@
         "veggieLike": {
           "type": "boolean",
           "description": "Do I like this vegetable?"
+        },
+        "type_number": {
+          "type": "array",
+          "description": "The type and number of vegetable.",
+          "items": [
+            { "type": "string", "description": "The type of the vegetable." },
+            { "type": "number", "description": "The number of vegetable." }
+          ]
         }
       }
     }

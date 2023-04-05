@@ -17,7 +17,7 @@ import json
 import re
 import subprocess  # nosec
 import sys
-from typing import Dict, List, Optional, Sequence
+from typing import Dict, List, Optional, Sequence, Union
 
 import yaml
 
@@ -139,22 +139,36 @@ class Parser:
 
     def _parse_object(
         self,
-        obj: Dict,
+        obj: Union[Dict, List],
         name: Optional[str],
         name_monospace: bool = True,
-        output_lines: Optional[str] = None,
+        output_lines: Optional[List[str]] = None,
         indent_level: int = 0,
         path: Optional[List[str]] = None,
     ) -> Sequence[str]:
         """Parse JSON object and its items, definitions, and properties recursively."""
-        if not isinstance(obj, dict):
-            raise TypeError(f"Non-object type found in properties list: `{name}: {obj}`.")
 
         if not output_lines:
             output_lines = []
 
         indentation = " " * self.tab_size * indent_level
         indentation_items = " " * self.tab_size * (indent_level + 1)
+
+        if isinstance(obj, list):
+            output_lines.append(f"{indentation}- **{name}**:\n")
+
+            for element in obj:
+                output_lines = self._parse_object(
+                    element,
+                    None,
+                    name_monospace=False,
+                    output_lines=output_lines,
+                    indent_level=indent_level + 2,
+                )
+            return output_lines
+
+        if not isinstance(obj, dict):
+            raise TypeError(f"Non-object type found in properties list: `{name}: {obj}`.")
 
         # Construct full description line
         description_line_base = self._construct_description_line(obj)
