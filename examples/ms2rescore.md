@@ -39,18 +39,18 @@ _MS²ReScore JSON configuration file._
     - **Items**: Refer to _[#/definitions/modifications](#definitions/modifications)_.
 - **`percolator`** _(object)_: Command line options directly passed to Percolator (see the Percolator wiki).
 - **`maxquant_to_rescore`** _(object)_: Settings specific to the MaxQuant pipeline. Cannot contain additional properties.
-  - **`mgf_dir`** _(string)_: Path to directory with MGF files.
-  - **`modification_mapping`** _(object)_: Mapping of MaxQuant modification labels to modifications names for MS²PIP. Default: `{}`.
-  - **`fixed_modifications`** _(object)_: Mapping of amino acids with fixed modifications to the modification name. Default: `{}`.
+  - **`mgf_dir`** _(string, required)_: Path to directory with MGF files.
+  - **`modification_mapping`** _(object, required)_: Mapping of MaxQuant modification labels to modifications names for MS²PIP. Default: `{}`.
+  - **`fixed_modifications`** _(object, required)_: Mapping of amino acids with fixed modifications to the modification name. Default: `{}`.
 
 ## Definitions
 
 - <a id="definitions/modifications"></a>**`modifications`** _(object)_: Peptide mass modifications, per amino acid. Cannot contain additional properties.
-  - **`name`** _(string)_: Unique name for modification.
-  - **`unimod_accession`** _(number)_: Unimod accession of modification.
-  - **`mass_shift`** _(number)_: Mono-isotopic mass shift.
+  - **`name`** _(string, required)_: Unique name for modification.
+  - **`unimod_accession`** _(number, required)_: Unimod accession of modification.
+  - **`mass_shift`** _(number, required)_: Mono-isotopic mass shift.
   - **`amino_acid`**: Amino acid one-letter code, or null if amino acid-agnostic (e.g. N-term acetylation).
     - **One of**
       - _string_
       - _null_
-  - **`n_term`** _(boolean)_: Modification is N-terminal.
+  - **`n_term`** _(boolean, required)_: Modification is N-terminal.

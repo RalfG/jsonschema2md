@@ -199,8 +199,8 @@ class TestParser:
             "  - **Items**: Refer to *[#/definitions/veggie](#definitions/veggie)*.\n",
             "## Definitions\n\n",
             '- <a id="definitions/veggie"></a>**`veggie`** *(object)*\n',
-            "  - **`veggieName`** *(string)*: The name of the vegetable.\n",
-            "  - **`veggieLike`** *(boolean)*: Do I like this vegetable?\n",
+            "  - **`veggieName`** *(string, required)*: The name of the vegetable.\n",
+            "  - **`veggieLike`** *(boolean, required)*: Do I like this vegetable?\n",
             "## Examples\n\n",
             "  ```json\n"
             "  {\n"
@@ -234,8 +234,8 @@ class TestParser:
             "  - **Items**: Refer to *[#/definitions/veggie](#definitions/veggie)*.\n",
             "## Definitions\n\n",
             '- <a id="definitions/veggie"></a>**`veggie`** *(object)*\n',
-            "  - **`veggieName`** *(string)*: The name of the vegetable.\n",
-            "  - **`veggieLike`** *(boolean)*: Do I like this vegetable?\n",
+            "  - **`veggieName`** *(string, required)*: The name of the vegetable.\n",
+            "  - **`veggieLike`** *(boolean, required)*: Do I like this vegetable?\n",
             "## Examples\n\n",
             "  ```yaml\n  fruits:\n  - apple\n  - orange\n  vegetables:\n  -   veggieLike: true\n      veggieName: cabbage\n  ```\n\n",
         ]

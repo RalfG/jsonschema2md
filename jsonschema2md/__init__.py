@@ -145,6 +145,7 @@ class Parser:
         output_lines: Optional[List[str]] = None,
         indent_level: int = 0,
         path: Optional[List[str]] = None,
+        required: bool = False,
     ) -> Sequence[str]:
         """Parse JSON object and its items, definitions, and properties recursively."""
 
@@ -185,7 +186,8 @@ class Parser:
             obj_type = f"*{obj['type']}*" if "type" in obj else ""
             name_formatted = ""
         else:
-            obj_type = f" *({obj['type']})*" if "type" in obj else ""
+            required_str = ", required" if required else ""
+            obj_type = f" *({obj['type']}{required_str})*" if "type" in obj else ""
             name_formatted = f"**`{name}`**" if name_monospace else f"**{name}**"
         anchor = f"<a id=\"{'/'.join(path)}\"></a>" if path else ""
         output_lines.append(f"{indentation}- {anchor}{name_formatted}{obj_type}{description_line}\n")
@@ -238,6 +240,7 @@ class Parser:
                         property_name,
                         output_lines=output_lines,
                         indent_level=indent_level + 1,
+                        required=property_name in obj.get("required", []),
                     )
 
         # Add examples

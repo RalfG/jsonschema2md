@@ -13,8 +13,8 @@ _A representation of a person, company, organization, or place_
 
 - <a id="definitions/veggie"></a>**`veggie`** _(object)_
 
-  - **`veggieName`** _(string)_: The name of the vegetable.
-  - **`veggieLike`** _(boolean)_: Do I like this vegetable?
+  - **`veggieName`** _(string, required)_: The name of the vegetable.
+  - **`veggieLike`** _(boolean, required)_: Do I like this vegetable?
 
   Examples:
 
