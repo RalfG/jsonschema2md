@@ -29,12 +29,12 @@ jsonschema2md = 'jsonschema2md:main'
 
 [tool.poetry.dependencies]
 python = "^3.7.2"
-importlib_metadata = { version = "^1", python = "<3.8"}
+importlib_metadata = { version = "^1", python = "<3.8" }
 PyYAML = ">=5.1"
 
 [tool.poetry.dev-dependencies]
 prospector = { version = "^1.9.0", extras = ["with_bandit", "with_mypy", "with_pyroma"] }
-pytest = "^6.0.1"
+pytest = "^6.2.5"
 pytest-cov = "^2.10.1"
 pydocstyle = "^5.1.1"
 

@@ -3,49 +3,73 @@ name: Test Python package
 on: [push, pull_request]
 
 jobs:
+  checks:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v2
+        with:
+          python-version: '3.10'
+      - run: pip install --requirement=.github/requirements.txt
+
+      - run: pip install --editable=.
+      - uses: actions/cache@v3
+        with:
+          path: ~/.cache/pre-commit
+          key: pre-commit-${{ hashFiles('.pre-commit-config.yaml') }}
+          restore-keys: "pre-commit-${{ hashFiles('.pre-commit-config.yaml') }}\npre-commit-"
+      - run: pre-commit run --all-files
+      - run: git diff && false
+        if: failure()
+
+      - name: Install with Poetry
+        run: poetry install
+
+      - name: Check with Prospector
+        run: poetry run prospector --output-format=pylint --die-on-tool-error
+
   test_platforms:
     runs-on: ${{ matrix.os }}
+    timeout-minutes: 15
+    needs:
+      - checks
     strategy:
       max-parallel: 3
+      fail-fast: false
       matrix:
-        python-version: [3.6, 3.7, 3.8]
+        python-version: [3.8, 3.9, '3.10', 3.11]
         os: [ubuntu-latest, windows-latest, macos-latest]
     steps:
-    - uses: actions/checkout@v2
-    - uses: actions/setup-python@v2
-      with:
-        python-version: ${{ matrix.python-version }}
-    - name: Setup Poetry
-      uses: abatilo/actions-poetry@v2.0.0
-    - name: Install with Poetry
-      run: poetry install
-    - name: Lint with flake8
-      run: |
-        # stop the build if there are Python syntax errors or undefined names
-        poetry run flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
-        # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
-        poetry run flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
-    - name: Test with pytest
-      run: |
-        poetry run pytest tests
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - run: pip install --requirement=.github/requirements.txt
+
+      - name: Install with Poetry
+        run: poetry install
+
+      - name: Test with pytest
+        run: |
+          poetry run pytest tests
 
   test_coverage:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     steps:
-    - uses: actions/checkout@v2
-    - uses: actions/setup-python@v2
-      with:
-        python-version: 3.8
-    - name: Setup Poetry
-      uses: abatilo/actions-poetry@v2.0.0
-    - name: Install with Poetry
-      run: poetry install
-    - name: Check for syntax errors
-      run: |
-        # stop the build if there are Python syntax errors or undefined names
-        poetry run flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
-    - name: Test with pytest and get coverage report
-      run: |
-        poetry run pytest --cov=jsonschema2md tests --cov-report=xml
-    - name: Upload coverage reports to Codecov
-      uses: codecov/codecov-action@v1.0.13
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v2
+        with:
+          python-version: '3.10'
+      - run: pip install --requirement=.github/requirements.txt
+
+      - name: Install with Poetry
+        run: poetry install
+
+      - name: Test with pytest and get coverage report
+        run: |
+          poetry run pytest --cov=jsonschema2md tests --cov-report=xml
+      - name: Upload coverage reports to Codecov
+        uses: codecov/codecov-action@v1.0.13

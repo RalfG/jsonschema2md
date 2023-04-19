@@ -1,9 +1,6 @@
 ci:
   autoupdate_schedule: quarterly
   skip:
-    - copyright
-    - poetry-check
-    - poetry-lock
     - ripsecrets
     - jsonschema2md-basic
     - jsonschema2md-food
@@ -58,16 +55,6 @@ repos:
       - id: end-of-file-fixer
       - id: trailing-whitespace
       - id: mixed-line-ending
-  - repo: https://github.com/sbrunner/hooks
-    rev: 0.3.2
-    hooks:
-      - id: copyright
-      - id: poetry-check
-        additional_dependencies:
-          - poetry==1.4.1 # pypi
-      - id: poetry-lock
-        additional_dependencies:
-          - poetry==1.4.1 # pypi
   - repo: https://github.com/codespell-project/codespell
     rev: v2.2.2
     hooks:
