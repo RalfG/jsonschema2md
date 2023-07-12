@@ -1,3 +1,5 @@
+⚠️ This repo is archived in favor of its fork [sbrunner/jsonschema2md2](https://github.com/sbrunner/jsonschema2md2) ⚠️
+
 # jsonschema2md
 
 [![](https://flat.badgen.net/pypi/v/jsonschema2md?icon=pypi)](https://pypi.org/project/jsonschema2md)
